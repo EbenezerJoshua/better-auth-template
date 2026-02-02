@@ -18,7 +18,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { signUp, signIn } from "../../server/users"
+// import { signUp, signIn } from "../../server/users"
+import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -26,24 +27,25 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { authClient } from "@/lib/auth-client"
-import Link from "next/link"
 
 
 const signUpSchema = z.object({
+  name: z.string(),
   email: z.string(),
   password: z.string(),
 })
 
-type SignUpForm = z.infer<typeof signUpSchema>;
+type SignUpFormType = z.infer<typeof signUpSchema>;
 
 export function SignUpForm() {
 
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const form = useForm<SignUpForm>({
+  const form = useForm<SignUpFormType>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
@@ -57,19 +59,37 @@ export function SignUpForm() {
   };
 
   // 2. Define a submit handler.
-  async function onSubmit(values: SignUpForm) {
-    setIsLoading(true)
-    const { success, message } = await signUp(values.email, values.password)
+  async function onSubmit(values: SignUpFormType) {
+    // setIsLoading(true)
+    // const { success, message } = await signUp(values.email, values.password)
 
-    if (success) {
-      toast.success(message as string)
-      router.push("/dashboard")
-    } else {
-      toast.error(message as string)  
-    }
+    // if (success) {
+    //   toast.success(message as string)
+    //   router.push("/dashboard")
+    // } else {
+    //   toast.error(message as string)  
+    // }
     
-    setIsLoading(false)
-    console.log(values)
+    // setIsLoading(false)
+    // console.log(values)
+    
+    setIsLoading(true)
+    // Call the sign-up function from authClient
+    await authClient.signUp.email(
+      {...values, callbackURL: "/dashboard"},
+      {
+        onSuccess: () => {
+          toast.success("Account created successfully!")
+          router.push("/dashboard")
+        },
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to Sign-Up.")
+        },
+        onSettled: () => {
+          setIsLoading(false)
+        }
+      }
+    )
   }
 
   return (
@@ -82,6 +102,21 @@ export function SignUpForm() {
               Enter your email below to create your account
             </p>
           </div>
+          <Field>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Field>
           <Field>
             <FormField
               control={form.control}
@@ -113,7 +148,7 @@ export function SignUpForm() {
             />
           </Field>
           <Field>
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Logging In..." : "Login"}</Button>
+            <Button type="submit" disabled={isLoading}>{isLoading ? "Signing Up..." : "Sign Up"}</Button>
           </Field>
           <FieldDescription className="text-center">
             <Link href="/forgot-password" className="underline underline-offset-4">
