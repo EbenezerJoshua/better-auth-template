@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { signUp, signIn } from "../../server/users"
+import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -26,23 +26,24 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { authClient } from "@/lib/auth-client"
-import Link from "next/link"
 
 
-const formSchema = z.object({
+const signInSchema = z.object({
   email: z.string(),
   password: z.string(),
 })
+
+type SignInFormType = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
 
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignInFormType>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
+        email: "",
       password: "",
     },
   })
@@ -55,19 +56,37 @@ export function SignInForm() {
   };
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-    const { success, message } = await signIn(values.email, values.password)
+  async function onSubmit(values: SignInFormType) {
+    // setIsLoading(true)
+    // const { success, message } = await signUp(values.email, values.password)
 
-    if (success) {
-      toast.success(message as string)
-      router.push("/dashboard")
-    } else {
-      toast.error(message as string)
-    }
+    // if (success) {
+    //   toast.success(message as string)
+    //   router.push("/dashboard")
+    // } else {
+    //   toast.error(message as string)  
+    // }
     
-    setIsLoading(false)
-    console.log(values)
+    // setIsLoading(false)
+    // console.log(values)
+    
+    setIsLoading(true)
+    // Call the sign-up function from authClient
+    await authClient.signIn.email(
+      {...values, callbackURL: "/dashboard"},
+      {
+        onSuccess: () => {
+          toast.success("Account created successfully!")
+          router.push("/dashboard")
+        },
+        onError: (error) => {
+          toast.error(error.error.message || "Failed to Sign-In.")
+        },
+        onSettled: () => {
+          setIsLoading(false)
+        }
+      }
+    )
   }
 
   return (
@@ -75,9 +94,9 @@ export function SignInForm() {
       <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Login to your account</h1>
+            <h1 className="text-2xl font-bold">Sign into your account</h1>
             <p className="text-muted-foreground text-sm text-balance">
-              Enter your email below to login to your account
+              Enter your email below to sign into your account
             </p>
           </div>
           <Field>
@@ -111,7 +130,7 @@ export function SignInForm() {
             />
           </Field>
           <Field>
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Logging In..." : "Login"}</Button>
+            <Button type="submit" disabled={isLoading}>{isLoading ? "Signing In..." : "Sign In"}</Button>
           </Field>
           <FieldDescription className="text-center">
             <Link href="/forgot-password" className="underline underline-offset-4">
@@ -129,12 +148,12 @@ export function SignInForm() {
               </svg>
               Login with Google
             </Button>
-            {/* <FieldDescription className="text-center">
+            <FieldDescription className="text-center">
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="underline underline-offset-4">
                 Sign up
               </Link>
-            </FieldDescription> */}
+            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>
