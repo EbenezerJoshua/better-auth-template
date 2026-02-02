@@ -1,8 +1,33 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
 export default function DashboardPage() {
+
+    const {data: session, isPending: loading} = authClient.useSession();
+    const router = useRouter();
+
+    if(loading) {
+        return <div>Loading...</div>;
+    }
+
+    const handleSignOut = async () => {
+        await authClient.signOut();
+        router.push("/login");
+    }
+
     return (
-        <div>
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+        <div className="text-center mt-20">
+            <h1 className="text-2xl font-bold mb-4 ">Dashboard</h1>
             <p>Welcome to your dashboard!</p>
+            {session ? (
+                <div className="mt-4">
+                    <p className="mb-2">You are logged in as: <strong>{session.user.name}</strong></p>
+                    <Button variant="destructive" onClick={handleSignOut}>Sign Out</Button>
+                </div>
+            ) : null}
         </div>
     );
 }
