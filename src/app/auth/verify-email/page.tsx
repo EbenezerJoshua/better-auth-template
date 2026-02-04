@@ -6,20 +6,22 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-/* ---------------- Types ---------------- */
+/* ================= Types ================= */
 
 type PendingVerification = {
   email: string;
   createdAt: number;
+  lastResentAt?: number;
 };
 
-/* ---------------- Constants ---------------- */
+/* ================= Constants ================= */
 
 const STORAGE_KEY = "pending_verification_email";
 const EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
+const RESEND_COOLDOWN_MS = 30 * 1000; // 30 seconds
 const POLLING_INTERVAL_MS = 3000;
 
-/* ---------------- Page ---------------- */
+/* ================= Page ================= */
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -28,8 +30,9 @@ export default function VerifyEmailPage() {
     useState<PendingVerification | null>(null);
 
   const [checking, setChecking] = useState(true);
+  const [cooldown, setCooldown] = useState(0);
 
-  /* ---------- Load pending email from sessionStorage ---------- */
+  /* ---------- Load pending verification ---------- */
   useEffect(() => {
     const raw = sessionStorage.getItem(STORAGE_KEY);
 
@@ -41,11 +44,21 @@ export default function VerifyEmailPage() {
     try {
       const parsed: PendingVerification = JSON.parse(raw);
 
-      // ⏱ Expiry check
+      // Expired verification session
       if (Date.now() - parsed.createdAt > EXPIRY_MS) {
         sessionStorage.removeItem(STORAGE_KEY);
         router.replace("/auth/login");
         return;
+      }
+
+      // Restore resend cooldown
+      if (parsed.lastResentAt) {
+        const elapsed = Date.now() - parsed.lastResentAt;
+        const remaining = Math.max(
+          0,
+          Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000)
+        );
+        setCooldown(remaining);
       }
 
       setPending(parsed);
@@ -56,14 +69,14 @@ export default function VerifyEmailPage() {
     }
   }, [router]);
 
-  /* ---------- Poll for email verification ---------- */
+  /* ---------- Poll for verification completion ---------- */
   useEffect(() => {
     if (!pending) return;
 
     const interval = setInterval(async () => {
       const session = await authClient.getSession();
 
-      if (session && session?.data?.user?.emailVerified) {
+      if (session?.data?.user?.emailVerified) {
         sessionStorage.removeItem(STORAGE_KEY);
         router.replace("/dashboard");
       }
@@ -72,9 +85,26 @@ export default function VerifyEmailPage() {
     return () => clearInterval(interval);
   }, [pending, router]);
 
-  /* ---------- Resend verification email ---------- */
+  /* ---------- Cooldown countdown ---------- */
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  /* ---------- Resend verification ---------- */
   const resendVerification = async () => {
-    if (!pending) return;
+    if (!pending || cooldown > 0) return;
 
     const res = await authClient.sendVerificationEmail({
       email: pending.email,
@@ -83,14 +113,24 @@ export default function VerifyEmailPage() {
 
     if (res?.error) {
       toast.error(res.error.message || "Failed to resend email");
-    } else {
-      toast.success("Verification email sent!");
+      return;
     }
+
+    toast.success("Verification email sent!");
+
+    const updated: PendingVerification = {
+      ...pending,
+      lastResentAt: Date.now(),
+    };
+
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setPending(updated);
+    setCooldown(RESEND_COOLDOWN_MS / 1000);
   };
 
   if (checking || !pending) return null;
 
-  /* ---------------- UI ---------------- */
+  /* ================= UI ================= */
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
@@ -99,7 +139,7 @@ export default function VerifyEmailPage() {
       </h1>
 
       <p className="mb-4">
-        We’ve sent a verification link to{" "}
+        A verification link has been sent to{" "}
         <strong>{pending.email}</strong>.
       </p>
 
@@ -107,8 +147,14 @@ export default function VerifyEmailPage() {
         This page will update automatically once your email is verified.
       </p>
 
-      <Button variant="outline" onClick={resendVerification}>
-        Resend Verification Email
+      <Button
+        variant="outline"
+        onClick={resendVerification}
+        disabled={cooldown > 0}
+      >
+        {cooldown > 0
+          ? `Resend available in ${cooldown}s`
+          : "Resend Verification Email"}
       </Button>
     </div>
   );
