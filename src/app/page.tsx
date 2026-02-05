@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
 
   const handleClick = () => {
-    window.location.href = "/login";
+    window.location.href = "/auth/login";
   };
   
   return (
