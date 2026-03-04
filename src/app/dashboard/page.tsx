@@ -3,20 +3,53 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { SessionManager } from "./components/session-manager";
 
 export default function DashboardPage() {
 
-    const {data: session, isPending: loading} = authClient.useSession();
+    const { data: session, isPending: loading } = authClient.useSession();
     const router = useRouter();
 
-    if(!session && !loading) {
-        router.push("/auth/login");
+    useEffect(() => {
+        // Poll every 15 seconds to see if the session is still valid
+        // 15 seconds is a much better balance for server load than 5 seconds.
+        const interval = setInterval(async () => {
+            const { data, error } = await authClient.getSession();
+            if (error || !data) {
+                router.push("/auth/login");
+            }
+        }, 15000); // 15 seconds
+
+        // Add event listener for window focus to check immediately when coming back
+        const handleFocus = async () => {
+            const { data, error } = await authClient.getSession();
+            if (error || !data) {
+                router.push("/auth/login");
+            }
+        };
+        window.addEventListener("focus", handleFocus);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener("focus", handleFocus);
+        };
+    }, [router]);
+
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!session && !loading) {
+            router.push("/auth/login");
+        }
+    }, [session, loading, router]);
+
+    // Show nothing while redirecting
+    if (!session && !loading) {
         return null;
     }
 
-    if(loading) {
-        return <div>Loading...</div>;
+    if (loading) {
+        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
     }
 
     const handleSignOut = async () => {

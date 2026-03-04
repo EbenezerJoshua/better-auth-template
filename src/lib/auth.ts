@@ -25,7 +25,7 @@ export const auth = betterAuth({
             await sendVerificationEmail({ user, url });
         }
     },
-    
+
     socialProviders: {
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -40,14 +40,14 @@ export const auth = betterAuth({
             clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
         }
     },
-    
+
     session: {
-        cookieCache : {
-            enabled: true,
-            maxAge: 60 
+        cookieCache: {
+            enabled: false,
+            maxAge: 0
         },
     },
-    
+
     database: drizzleAdapter(db, {
         provider: "pg", // tells better-auth which database provider you are using
         schema: schema,
