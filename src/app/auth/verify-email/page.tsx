@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 /* ================= Types ================= */
@@ -134,29 +135,32 @@ export default function VerifyEmailPage() {
   /* ================= UI ================= */
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4">
-        Verify your email
-      </h1>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Verify your email</CardTitle>
+          <CardDescription>
+            A verification link has been sent to <strong className="text-foreground">{pending.email}</strong>.
+          </CardDescription>
+        </CardHeader>
 
-      <p className="mb-4">
-        A verification link has been sent to{" "}
-        <strong>{pending.email}</strong>.
-      </p>
+        <CardContent className="flex flex-col items-center space-y-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            This page will update automatically once your email is verified.
+          </p>
 
-      <p className="text-sm text-muted-foreground mb-6">
-        This page will update automatically once your email is verified.
-      </p>
-
-      <Button
-        variant="outline"
-        onClick={resendVerification}
-        disabled={cooldown > 0}
-      >
-        {cooldown > 0
-          ? `Resend available in ${cooldown}s`
-          : "Resend Verification Email"}
-      </Button>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={resendVerification}
+            disabled={cooldown > 0}
+          >
+            {cooldown > 0
+              ? `Resend available in ${cooldown}s`
+              : "Resend Verification Email"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

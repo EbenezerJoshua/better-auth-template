@@ -23,6 +23,7 @@ import {
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 
 const forgotPasswordSchema = z.object({
   email: z.email().min(1),
@@ -40,10 +41,32 @@ export default function ForgotPassword() {
   })
 
   const { isSubmitting } = form.formState
+  const router = useRouter()
 
-  const router = useRouter()    
+  // Implement a cooldown state so users cannot spam the "Forgot Password" email button
+  const [cooldown, setCooldown] = useState(0);
+
+  // Countdown effect to reduce the cooldown every second
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0; // stop timer at zero
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   async function handleForgotPassword(data: ForgotPasswordForm) {
+    // If we're still waiting on the cooldown timer, do absolutely nothing.
+    if (cooldown > 0) return;
+
     await authClient.requestPasswordReset(
       {
         ...data,
@@ -57,6 +80,8 @@ export default function ForgotPassword() {
         },
         onSuccess: () => {
           toast.success("Password reset email sent")
+          // Set a 30 second cooldown before they can click send again
+          setCooldown(30)
         },
       }
     )
@@ -68,42 +93,54 @@ export default function ForgotPassword() {
   }
 
   return (
-    <Form {...form}>
-      <Card className="max-w-md mx-auto my-10">
-        <CardHeader>
-          <CardTitle>Forgot Password</CardTitle>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
           <CardDescription>Enter your email to receive a reset link.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form
-            className="space-y-4 flex flex-col w-full"
-            onSubmit={form.handleSubmit(handleForgotPassword)}
-          >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Form {...form}>
+            <form
+              className="space-y-6 flex flex-col w-full"
+              onSubmit={form.handleSubmit(handleForgotPassword)}
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="john@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={handleBack}>
-                Back
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting ? "Sending..." : "Send Reset Email"}
-              </Button>
-            </div>
-          </form>
+              <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
+                <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={handleBack}>
+                  Back to Login
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || cooldown > 0}
+                  className="flex-1 w-full"
+                >
+                  {isSubmitting
+                    ? "Sending Link..."
+                    : cooldown > 0
+                      ? `Resend in ${cooldown}s`
+                      : "Send Reset Link"
+                  }
+                </Button>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
-    </Form>
+    </div>
   )
 }
