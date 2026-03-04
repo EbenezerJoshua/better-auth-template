@@ -17,7 +17,7 @@ export function SessionManager() {
             await authClient.revokeSessions();
             setSessions([])
             await authClient.signOut();
-            router.push("/login")
+            router.push("/auth/login")
             toast.success("All Sessions revoked successfully")
         } catch (error) {
             const e = error as Error
@@ -32,7 +32,7 @@ export function SessionManager() {
             router.refresh()
             
             if (isCurrent) {
-                router.push("/login")
+                router.push("/auth/login")
             } else {
                 await fetchSessions()
             }
