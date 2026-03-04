@@ -58,17 +58,45 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="text-center mt-20">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            <p>Welcome to your dashboard!</p>
-            {session ? (
-                <div className="mt-4">
-                    <p className="mb-2">You are logged in as: <strong>{session.user.name}</strong></p>
-                    <Button variant="destructive" onClick={handleSignOut}>Sign Out</Button>
+        <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
+            <div className="flex flex-col space-y-8">
+                {/* Header Section */}
+                <div className="space-y-2 text-center">
+                    <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+                        Account Dashboard
+                    </h1>
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                        Welcome back! Manage your active sessions, reset your password, and control your device access.
+                    </p>
                 </div>
-            ) : null}
-            <h2 className="mt-8">Here are your Sessions of your account</h2>
-            <SessionManager />
+
+                {/* Profile Overview Card */}
+                {session ? (
+                    <div className="max-w-xl mx-auto w-full p-6 border rounded-xl bg-card text-card-foreground shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Logged in as</p>
+                            <p className="text-xl font-semibold mt-1">{session.user.name}</p>
+                            <p className="text-sm text-muted-foreground">{session.user.email}</p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            <Button
+                                variant="outline"
+                                onClick={() => router.push("/auth/reset-password")}
+                            >
+                                Reset Password
+                            </Button>
+                            <Button variant="destructive" onClick={handleSignOut}>
+                                Sign Out
+                            </Button>
+                        </div>
+                    </div>
+                ) : null}
+
+                {/* Sessions Section */}
+                <div className="pt-8 border-t">
+                    <SessionManager />
+                </div>
+            </div>
         </div>
     );
 }

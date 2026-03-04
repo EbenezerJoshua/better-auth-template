@@ -170,11 +170,6 @@ export function SignUpForm() {
           <Field>
             <Button type="submit" disabled={isLoading}>{isLoading ? "Signing Up..." : "Sign Up"}</Button>
           </Field>
-          <FieldDescription className="text-center">
-            <Link href="/auth/forgot-password" className="underline underline-offset-4">
-              Forgot Password ?
-            </Link>
-          </FieldDescription>
           <FieldSeparator>Or continue with</FieldSeparator>
           <Field>
             <Button variant="outline" type="button" onClick={signInWithGoogle}>
