@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/card"
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect, Suspense } from "react"
 
 const forgotPasswordSchema = z.object({
   email: z.email().min(1),
@@ -31,12 +31,18 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>
 
-export default function ForgotPassword() {
+// We split the actual form into its own component so it can be wrapped in a <Suspense> boundary. 
+// This is required in Next.js when reading URL query parameters via useSearchParams.
+function ForgotPasswordFormContent() {
+
+  // We use the search parameters hook to see if the user passed an email from the login page
+  const searchParams = useSearchParams()
+  const prefilledEmail = searchParams.get("email") || ""
 
   const form = useForm<ForgotPasswordForm>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: "",
+      email: prefilledEmail, // Automatically populates if the user typed it previously
     },
   })
 
@@ -142,5 +148,14 @@ export default function ForgotPassword() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function ForgotPassword() {
+  return (
+    // <Suspense> is required here because `useSearchParams` needs to de-opt to client rendering on load
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <ForgotPasswordFormContent />
+    </Suspense>
   )
 }

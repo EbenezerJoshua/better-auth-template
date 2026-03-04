@@ -42,8 +42,8 @@ export function SignInForm() {
   const form = useForm<SignInFormType>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-        email: "",
-        password: "",
+      email: "",
+      password: "",
     },
   })
 
@@ -73,7 +73,7 @@ export function SignInForm() {
       callbackURL: "/dashboard"
     });
 
-     if (res.error) {
+    if (res.error) {
       toast.error(res.error.message || "Failed to Sign-In with Discord.")
     } else {
       toast.success("Signed-In with Discord successfully!")
@@ -83,7 +83,7 @@ export function SignInForm() {
   // 2. Define a submit handler.
   async function onSubmit(values: SignInFormType) {
     await authClient.signIn.email(
-      {...values, callbackURL: "/dashboard"},
+      { ...values, callbackURL: "/dashboard" },
       {
         onSuccess: () => {
           toast.success("Signed in successfully!")
@@ -143,7 +143,14 @@ export function SignInForm() {
             <Button type="submit" disabled={isLoading}>{isLoading ? "Signing In..." : "Sign In"}</Button>
           </Field>
           <FieldDescription className="text-center">
-            <Link href="/auth/forgot-password" className="underline underline-offset-4">
+            {/* 
+              Pass the currently typed email into the URL so the Forgot Password page 
+              can pick it up automatically. This uses form.watch("email")
+            */}
+            <Link
+              href={`/auth/forgot-password${form.watch("email") ? `?email=${encodeURIComponent(form.watch("email"))}` : ""}`}
+              className="underline underline-offset-4"
+            >
               Forgot Password ?
             </Link>
           </FieldDescription>
