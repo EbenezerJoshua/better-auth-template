@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useEffect } from "react";
 import { SessionManager } from "./components/session-manager";
+import Link from "next/link";
 
 export default function DashboardPage() {
 
@@ -44,16 +44,7 @@ export default function DashboardPage() {
         }
     }, [session, loading, router]);
 
-    // Cooldown timer state for the reset password button
-    const [resetCooldown, setResetCooldown] = useState(0);
 
-    useEffect(() => {
-        if (resetCooldown <= 0) return;
-        const timer = setInterval(() => {
-            setResetCooldown((prev) => (prev <= 1 ? 0 : prev - 1));
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [resetCooldown]);
 
     // Show nothing while redirecting
     if (!session && !loading) {
@@ -69,24 +60,7 @@ export default function DashboardPage() {
         router.push("/auth/login");
     }
 
-    const handleRequestReset = async () => {
-        if (!session?.user?.email || resetCooldown > 0) return;
 
-        await authClient.requestPasswordReset({
-            email: session.user.email,
-            redirectTo: "/auth/reset-password",
-        }, {
-            onSuccess: () => {
-                toast.success("Password reset email sent!", {
-                    description: "Please check your inbox for the reset link."
-                });
-                setResetCooldown(30); // 30 second cooldown
-            },
-            onError: (error) => {
-                toast.error(error.error.message || "Failed to send reset email");
-            }
-        });
-    };
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
@@ -110,12 +84,8 @@ export default function DashboardPage() {
                             <p className="text-sm text-muted-foreground">{session.user.email}</p>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                            <Button
-                                variant="outline"
-                                disabled={resetCooldown > 0}
-                                onClick={handleRequestReset}
-                            >
-                                {resetCooldown > 0 ? `Reset Sent (${resetCooldown}s)` : "Reset Password"}
+                            <Button variant="outline" asChild>
+                                <Link href="/auth/update-password">Update Password</Link>
                             </Button>
                             <Button variant="destructive" onClick={handleSignOut}>
                                 Sign Out
