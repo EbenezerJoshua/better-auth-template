@@ -6,6 +6,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { sendEmail } from "../../emails/mailtrapMailer";
 import { emailOTP } from "better-auth/plugins";
+import { twoFactor } from "better-auth/plugins/two-factor"
 import { sendPasswordResetEmail } from "@/emails/sendPasswordResetMail";
 import { sendVerificationEmail } from "@/emails/sendVerificationMail";
 import { sendExistingUserSignUpMail } from "@/emails/sendExistingUserSignUpMail";
@@ -13,6 +14,29 @@ import { createAuthMiddleware } from "better-auth/api";
 import { sendWelcomeEmail } from "@/emails/sendWelcomeEmail";
 
 export const auth = betterAuth({
+    user: {
+        changeEmail: {
+            enabled: true,
+            // sendChangeEmailVerification: async ({ user, url, newEmail }) => {
+            //     await sendEmailVerificationEmail({
+            //         user: { ...user, email: newEmail },
+            //         url,
+            //     })
+            // },
+        },
+        deleteUser: {
+            enabled: true,
+            sendDeleteAccountVerification: async ({ user, url }) => {
+                // await sendDeleteAccountVerificationEmail({ user, url })
+            },
+        },
+        // additionalFields: {
+        // favoriteNumber: {
+        //     type: "number",
+        //     required: true,
+        // },
+        // },
+    },
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
@@ -62,6 +86,7 @@ export const auth = betterAuth({
     }),
 
     plugins: [
+        twoFactor(),
         // emailOTP({
         //     async sendVerificationOTP({ email, otp, type }: { email: string, otp: string, type: "sign-in" | "email-verification" | "forget-password" }) {
         //         await sendEmail({
@@ -71,7 +96,7 @@ export const auth = betterAuth({
         //         })
         //     },
         // }),
-        nextCookies()
+        // nextCookies()
     ],
     hooks: {
         after: createAuthMiddleware(async ctx => {

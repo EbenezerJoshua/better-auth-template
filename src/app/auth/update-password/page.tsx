@@ -49,7 +49,7 @@ function UpdatePasswordFormContent() {
         defaultValues: {
             currentPassword: "",
             newPassword: "",
-            revokeOtherSessions: false,
+            revokeOtherSessions: true
         },
     })
 
@@ -58,11 +58,7 @@ function UpdatePasswordFormContent() {
     async function handleUpdatePassword(data: UpdatePasswordForm) {
 
         await authClient.changePassword(
-            {
-                currentPassword: data.currentPassword,
-                newPassword: data.newPassword,
-                revokeOtherSessions: data.revokeOtherSessions,
-            },
+           data,
             {
                 onError: error => {
                     toast.error(error.error.message || "Failed to update password")
