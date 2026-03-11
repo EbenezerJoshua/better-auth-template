@@ -25,7 +25,7 @@ import { ProfileUpdateForm } from "./components/profile-update-for"
 import { ReactNode, Suspense } from "react"
 import { SetPasswordButton } from "./components/set-password-button"
 import { ChangePasswordForm } from "./components/change-password-form"
-// import { SessionManagement } from "./_components/session-management"
+import { SessionManagement } from "./components/session-management"
 // import { AccountLinking } from "./_components/account-linking"
 // import { AccountDeletion } from "./_components/account-deletion"
 // import { TwoFactorAuth } from "./_components/two-factor-auth"
@@ -109,13 +109,13 @@ export default async function ProfilePage() {
           </LoadingSuspense>
         </TabsContent>
 
-        {/* <TabsContent value="sessions">
+        <TabsContent value="sessions">
           <LoadingSuspense>
             <SessionsTab currentSessionToken={session.session.token} />
           </LoadingSuspense>
         </TabsContent>
 
-        <TabsContent value="accounts">
+        {/* <TabsContent value="accounts">
           <LoadingSuspense>
             <LinkedAccountsTab />
           </LoadingSuspense>
@@ -151,24 +151,24 @@ export default async function ProfilePage() {
 //   )
 // }
 
-// async function SessionsTab({
-//   currentSessionToken,
-// }: {
-//   currentSessionToken: string
-// }) {
-//   const sessions = await auth.api.listSessions({ headers: await headers() })
+async function SessionsTab({
+  currentSessionToken,
+}: {
+  currentSessionToken: string
+}) {
+  const sessions = await auth.api.listSessions({ headers: await headers() })
 
-//   return (
-//     <Card>
-//       <CardContent>
-//         <SessionManagement
-//           sessions={sessions}
-//           currentSessionToken={currentSessionToken}
-//         />
-//       </CardContent>
-//     </Card>
-//   )
-// }
+  return (
+    <Card>
+      <CardContent>
+        <SessionManagement
+          sessions={sessions}
+          currentSessionToken={currentSessionToken}
+        />
+      </CardContent>
+    </Card>
+  )
+}
 
 async function SecurityTab({
   email,
