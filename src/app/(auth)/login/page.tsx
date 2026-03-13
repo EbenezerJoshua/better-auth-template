@@ -1,8 +1,7 @@
 "use client"
 
-import { GalleryVerticalEnd } from "lucide-react"
 import Image from "next/image"
-import logo from "../../assets/better-auth-logo.png"
+import logo from "@/app/assets/better-auth-logo.png"
 import {
   Tabs,
   TabsContent,
@@ -10,8 +9,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { useRouter } from "next/navigation"
-import { SignInForm } from "@/app/auth/login/sign-in-form"
-import { SignUpForm } from "@/app/auth/login/sign-up-form"
+import { SignInForm } from "@/app/(auth)/login/sign-in-form"
+import { SignUpForm } from "@/app/(auth)/login/sign-up-form"
 import { useEffect } from "react"
 import { authClient } from "@/lib/auth/auth-client"
 

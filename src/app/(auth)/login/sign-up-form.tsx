@@ -91,7 +91,7 @@ export function SignUpForm() {
 
     // Call the sign-up function from authClient
     await authClient.signUp.email(
-      { ...values, callbackURL: "/auth/verify-email", },
+      { ...values, callbackURL: "/verify-email", },
       {
         onSuccess: () => {
           sessionStorage.setItem("pending_verification_email", JSON.stringify({
@@ -100,7 +100,7 @@ export function SignUpForm() {
           })
           );
           toast.success("Account created. Verify your email.");
-          router.push("/auth/verify-email");
+          router.push("/verify-email");
         },
         onError: (ctx) => {
           toast.error(ctx.error.message || "Failed to Sign-Up.")
@@ -203,12 +203,6 @@ export function SignUpForm() {
               </svg>
               Sign in with Discord
             </Button>
-            <FieldDescription className="text-center">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="underline underline-offset-4">
-                Sign up
-              </Link>
-            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>

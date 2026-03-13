@@ -40,7 +40,7 @@ function UpdatePasswordFormContent() {
 
     useEffect(() => {
         if (!session && !loading) {
-            router.push("/auth/login");
+            router.push("/login");
         }
     }, [session, loading, router]);
 

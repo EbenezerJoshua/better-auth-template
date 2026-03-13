@@ -76,7 +76,7 @@ function ForgotPasswordFormContent() {
     await authClient.requestPasswordReset(
       {
         ...data,
-        redirectTo: "/auth/reset-password",
+        redirectTo: "/reset-password",
       },
       {
         onError: ctx => {
@@ -97,7 +97,7 @@ function ForgotPasswordFormContent() {
 
   async function handleBack() {
     form.reset()
-    router.push("/auth/login")
+    router.push("/login")
   }
 
   return (

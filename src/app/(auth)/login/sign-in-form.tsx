@@ -93,7 +93,7 @@ export function SignInForm() {
         onError: (ctx) => {
           if (ctx.error.status === 403) {
             toast.error("Please verify your email address");
-            router.push("/auth/verify-email")
+          router.push("/verify-email")
           } else {
             toast.error(ctx.error.message || "Failed to Sign-In.")
           }
@@ -155,7 +155,7 @@ export function SignInForm() {
               can pick it up automatically. This uses form.watch("email")
             */}
             <Link
-              href={`/auth/forgot-password${form.watch("email") ? `?email=${encodeURIComponent(form.watch("email"))}` : ""}`}
+              href={`/forgot-password${form.watch("email") ? `?email=${encodeURIComponent(form.watch("email"))}` : ""}`}
               className="underline underline-offset-4"
             >
               Forgot Password ?
@@ -194,13 +194,6 @@ export function SignInForm() {
               </svg>
               Sign in with Discord
             </Button>
-
-            <FieldDescription className="text-center">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="underline underline-offset-4">
-                Sign up
-              </Link>
-            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>

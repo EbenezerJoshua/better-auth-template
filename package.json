@@ -10,7 +10,8 @@
     "db:studio": "drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "auth:generate": "npx @better-auth/cli generate --config src/lib/auth/auth.ts --output src/db/schemas/auth-schema.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

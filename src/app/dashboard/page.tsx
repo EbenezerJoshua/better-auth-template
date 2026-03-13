@@ -18,7 +18,7 @@ export default function DashboardPage() {
         // const interval = setInterval(async () => {
         //     const { data, error } = await authClient.getSession();
         //     if (error || !data) {
-        //         router.push("/auth/login");
+        //         router.push("/login");
         //     }
         // }, 15000); // 15 seconds
 
@@ -26,7 +26,7 @@ export default function DashboardPage() {
         const handleFocus = async () => {
             const { data, error } = await authClient.getSession();
             if (error || !data) {
-                router.push("/auth/login");
+                router.push("/login");
             }
         };
         window.addEventListener("focus", handleFocus);
@@ -40,7 +40,7 @@ export default function DashboardPage() {
     // Redirect to login if not authenticated
     useEffect(() => {
         if (!session && !loading) {
-            router.push("/auth/login");
+            router.push("/login");
         }
     }, [session, loading, router]);
 
@@ -55,7 +55,7 @@ export default function DashboardPage() {
 
     const handleSignOut = async () => {
         await authClient.signOut();
-        router.push("/auth/login");
+        router.push("/login");
     }
 
 

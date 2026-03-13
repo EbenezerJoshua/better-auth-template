@@ -81,7 +81,7 @@ export function SessionManager() {
             setSessions([])
             await authClient.signOut();
             toast.success("Successfully logged out of all devices.")
-            router.push("/auth/login")
+            router.push("/login")
         } catch (error: any) {
             toast.error(error.message || "Failed to log out of all devices.")
         }
@@ -96,7 +96,7 @@ export function SessionManager() {
             // If they logged out of their current device, send them to login page immediately
             if (isCurrent) {
                 await authClient.signOut();
-                router.push("/auth/login")
+                router.push("/login")
             } else {
                 // Otherwise just refresh the list of remaining sessions
                 await fetchSessions()

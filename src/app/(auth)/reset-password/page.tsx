@@ -83,7 +83,7 @@ function ResetPasswordFormContent() {
           </CardHeader>
           <CardContent>
             <Button className="w-full" asChild>
-              <Link href="/auth/login">Back to Login</Link>
+              <Link href="/login">Back to Login</Link>
             </Button>
           </CardContent>
         </Card>

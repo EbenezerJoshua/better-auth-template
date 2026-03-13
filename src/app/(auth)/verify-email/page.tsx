@@ -38,7 +38,7 @@ export default function VerifyEmailPage() {
     const raw = sessionStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
-      router.replace("/auth/login");
+      router.replace("/login");
       return;
     }
 
@@ -48,7 +48,7 @@ export default function VerifyEmailPage() {
       // Expired verification session
       if (Date.now() - parsed.createdAt > EXPIRY_MS) {
         sessionStorage.removeItem(STORAGE_KEY);
-        router.replace("/auth/login");
+        router.replace("/login");
         return;
       }
 
@@ -66,7 +66,7 @@ export default function VerifyEmailPage() {
       setChecking(false);
     } catch {
       sessionStorage.removeItem(STORAGE_KEY);
-      router.replace("/auth/login");
+      router.replace("/login");
     }
   }, [router]);
 
