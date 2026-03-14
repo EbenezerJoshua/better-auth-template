@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { LoadingSwap } from "@/components/ui/loading-swap"
+import { LoadingSwap } from "@/components/auth/loading-swap"
 import { authClient } from "@/lib/auth/auth-client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { Passkey } from "better-auth/plugins/passkey"
+import { Passkey } from "@better-auth/passkey"
 import {
   Card,
   CardDescription,

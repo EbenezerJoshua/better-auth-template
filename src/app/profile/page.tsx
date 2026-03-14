@@ -177,12 +177,10 @@ async function SecurityTab({
   email: string
   isTwoFactorEnabled: boolean
 }) {
-  // const [passkeys, accounts] = await Promise.all([
-  //   auth.api.listPasskeys({ headers: await headers() }),
-  //   auth.api.listUserAccounts({ headers: await headers() }),
-  // ])
-
-  const accounts = await auth.api.listUserAccounts({ headers: await headers() })
+  const [passkeys, accounts] = await Promise.all([
+    auth.api.listPasskeys({ headers: await headers() }),
+    auth.api.listUserAccounts({ headers: await headers() }),
+  ])
 
   const hasPasswordAccount = accounts.some(a => a.providerId === "credential")
 
@@ -227,14 +225,14 @@ async function SecurityTab({
         </Card>
       )}
 
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Passkeys</CardTitle>
         </CardHeader>
         <CardContent>
           <PasskeyManagement passkeys={passkeys} />
         </CardContent>
-      </Card> */}
+      </Card>
     </div>
   )
 }

@@ -27,6 +27,7 @@ import { useState } from "react"
 import { authClient } from "@/lib/auth/auth-client"
 import { PasswordInput } from "@/components/ui/password-input"
 import { SocialAuthButtons } from "./social-auth-buttons"
+import { PasskeyButton } from "./passkey-button"
 
 
 const signInSchema = z.object({
@@ -94,7 +95,7 @@ export function SignInForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="test@email.com" {...field} />
+                    <Input placeholder="test@email.com" {...field} type="email" autoComplete="email webauthn" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,7 +110,7 @@ export function SignInForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <PasswordInput {...field} />
+                    <PasswordInput autoComplete="current-password webauthn" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,11 +120,8 @@ export function SignInForm() {
           <Field>
             <Button type="submit" disabled={isLoading}>{isLoading ? "Signing In..." : "Sign In"}</Button>
           </Field>
+          <PasskeyButton />
           <FieldDescription className="text-center">
-            {/* 
-              Pass the currently typed email into the URL so the Forgot Password page 
-              can pick it up automatically. This uses form.watch("email")
-            */}
             <Link
               href={`/forgot-password${form.watch("email") ? `?email=${encodeURIComponent(form.watch("email"))}` : ""}`}
               className="underline underline-offset-4"
