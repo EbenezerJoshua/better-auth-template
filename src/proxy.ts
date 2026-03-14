@@ -11,12 +11,12 @@ export async function proxy(request: NextRequest) {
     // This is the recommended approach to optimistically redirect users
     // We recommend handling auth checks in each page/route
     if (!session) {
-        return NextResponse.redirect(new URL("/auth/verify-email", request.url));
+        return NextResponse.redirect(new URL("/verify-email", request.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/dashboard", "/auth/update-password"], // Specify the routes the middleware applies to
+    matcher: ["/dashboard", "/profile"], // Specify the routes the middleware applies to
 };

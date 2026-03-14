@@ -205,7 +205,7 @@ async function SecurityTab({
           <CardHeader>
             <CardTitle>Set Password</CardTitle>
             <CardDescription>
-              We will send you a password reset email to set up a password.
+              We will send you a password setting email to set up a password.
             </CardDescription>
           </CardHeader>
           <CardContent>
