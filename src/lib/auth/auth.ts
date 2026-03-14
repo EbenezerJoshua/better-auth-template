@@ -4,7 +4,6 @@ import * as schema from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { sendEmail } from "../../emails/mailtrapMailer";
 import { emailOTP } from "better-auth/plugins";
 import { twoFactor } from "better-auth/plugins/two-factor"
 import { sendPasswordResetEmail } from "@/emails/sendPasswordResetMail";

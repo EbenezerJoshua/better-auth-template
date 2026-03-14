@@ -28,8 +28,8 @@ import { ChangePasswordForm } from "./components/change-password-form"
 import { SessionManagement } from "./components/session-management"
 import { AccountLinking } from "./components/account-linking"
 import { AccountDeletion } from "./components/account-deletion"
-// import { TwoFactorAuth } from "./_components/two-factor-auth"
-// import { PasskeyManagement } from "./_components/passkey-management"
+import { TwoFactorAuth } from "./components/two-factor-auth"
+import { PasskeyManagement } from "./components/passkey-management"
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -213,7 +213,7 @@ async function SecurityTab({
           </CardContent>
         </Card>
       )}
-      {/* {hasPasswordAccount && (
+      {hasPasswordAccount && (
         <Card>
           <CardHeader className="flex items-center justify-between gap-2">
             <CardTitle>Two-Factor Authentication</CardTitle>
@@ -227,7 +227,7 @@ async function SecurityTab({
         </Card>
       )}
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Passkeys</CardTitle>
         </CardHeader>
