@@ -83,7 +83,7 @@ export default function DashboardPage() {
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                             <Button variant="outline" asChild>
-                                <Link href="/auth/update-password">Update Password</Link>
+                                <Link href="/update-password">Update Password</Link>
                             </Button>
                             <Button variant="destructive" onClick={handleSignOut}>
                                 Sign Out
