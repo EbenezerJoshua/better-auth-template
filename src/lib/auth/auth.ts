@@ -4,7 +4,7 @@ import * as schema from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { emailOTP } from "better-auth/plugins";
+import { emailOTP, oneTap } from "better-auth/plugins";
 import { twoFactor } from "better-auth/plugins/two-factor"
 import { passkey } from "@better-auth/passkey"
 import { sendPasswordResetEmail } from "@/emails/sendPasswordResetMail";
@@ -90,6 +90,7 @@ export const auth = betterAuth({
     plugins: [
         twoFactor(),
         passkey(),
+        oneTap(),
         // emailOTP({
         //     async sendVerificationOTP({ email, otp, type }: { email: string, otp: string, type: "sign-in" | "email-verification" | "forget-password" }) {
         //         await sendEmail({

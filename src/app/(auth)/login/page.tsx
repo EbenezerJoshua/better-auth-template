@@ -11,11 +11,13 @@ import {
 import { useRouter } from "next/navigation"
 import { SignInForm } from "@/app/(auth)/login/components/sign-in-form"
 import { SignUpForm } from "@/app/(auth)/login/components/sign-up-form"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { authClient } from "@/lib/auth/auth-client"
 
 export default function LoginPage() {
   const router = useRouter()
+
+  const isOneTapInitialized = useRef(false)
 
   useEffect(() => {
     // Check if the user is already authenticated
@@ -23,6 +25,40 @@ export default function LoginPage() {
       const session = await authClient.getSession();
       if (session?.data != null) {
         router.push('/dashboard');   // If authenticated, redirect to dashboard
+      } else {
+        // Initialize Google One Tap for unauthenticated users
+        if (!isOneTapInitialized.current) {
+          isOneTapInitialized.current = true;
+
+          // Next.js dev overlay aggressively captures console.error and displays a full-screen crash.
+          // Google's One Tap library logs benign aborts (like canceling the prompt) as console.error.
+          // We intercept this specifically to prevent the dev environment from showing error overlays.
+          if (typeof window !== "undefined") {
+            const originalConsoleError = console.error.bind(console);
+            console.error = (...args: any[]) => {
+              const msg = args[0];
+              if (typeof msg === "string" && msg.includes("[GSI_LOGGER]")) {
+                if (msg.includes("AbortError") || msg.includes("NetworkError")) {
+                  // Silently swallow
+                  return;
+                }
+              }
+              originalConsoleError(...args);
+            };
+          }
+
+          authClient.oneTap({
+            fetchOptions: {
+              onSuccess: () => {
+                window.location.href = '/dashboard';
+              },
+            },
+          }).catch((err) => {
+            // Silently swallow unhandled promise rejections from OneTap 
+            // aborting due to competing with Passkeys or fedCM
+            console.debug("OneTap initialization aborted or failed quietly:", err);
+          });
+        }
       }
     };
 
