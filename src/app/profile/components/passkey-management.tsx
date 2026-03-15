@@ -18,12 +18,6 @@ import { authClient } from "@/lib/auth/auth-client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Passkey } from "@better-auth/passkey"
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { BetterAuthActionButton } from "@/components/auth/better-auth-action-button"
 import { Trash2 } from "lucide-react"
 import {
@@ -73,84 +67,92 @@ export function PasskeyManagement({ passkeys }: { passkeys: Passkey[] }) {
   }
 
   return (
-    <div className="space-y-6">
-      {passkeys.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>No passkeys yet</CardTitle>
-            <CardDescription>
-              Add your first passkey for secure, passwordless authentication.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      ) : (
+    <div className="space-y-4 pt-4 border-t">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h3 className="text-lg font-medium">Passkeys</h3>
+          <p className="text-sm text-muted-foreground">
+            Manage your secure passkeys for passwordless login.
+          </p>
+        </div>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={o => {
+            if (o) form.reset()
+            setIsDialogOpen(o)
+          }}
+        >
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full sm:w-40">New Passkey</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Passkey</DialogTitle>
+              <DialogDescription>
+                Create a new passkey for secure, passwordless authentication.
+              </DialogDescription>
+            </DialogHeader>
+
+            <Form {...form}>
+              <form
+                className="space-y-4"
+                onSubmit={form.handleSubmit(handleAddPasskey)}
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button type="submit" disabled={isSubmitting} className="w-full">
+                  <LoadingSwap isLoading={isSubmitting}>Add</LoadingSwap>
+                </Button>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </div>
+      
+      <div>
+        {passkeys.length === 0 ? (
+          <div className="py-8 text-center text-muted-foreground border rounded-xl bg-card">
+            No passkeys found. Add your first passkey above.
+          </div>
+        ) : (
         <div className="space-y-4">
           {passkeys.map(passkey => (
-            <Card key={passkey.id}>
-              <CardHeader className="flex gap-2 items-center justify-between">
-                <div className="space-y-1">
-                  <CardTitle>{passkey.name}</CardTitle>
-                  <CardDescription>
-                    Created {new Date(passkey.createdAt).toLocaleDateString()}
-                  </CardDescription>
-                </div>
-                <BetterAuthActionButton
-                  requireAreYouSure
-                  variant="destructive"
-                  size="icon"
-                  action={() => handleDeletePasskey(passkey.id)}
-                >
-                  <Trash2 />
-                </BetterAuthActionButton>
-              </CardHeader>
-            </Card>
+            <div
+              key={passkey.id}
+              className="flex items-center justify-between p-4 rounded-xl border border-border bg-card transition-all"
+            >
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">{passkey.name}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-2 mt-0.5">
+                  Created {new Date(passkey.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+              <BetterAuthActionButton
+                requireAreYouSure
+                variant="ghost"
+                size="sm"
+                action={() => handleDeletePasskey(passkey.id)}
+                className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+              >
+                <Trash2 className="size-4" />
+              </BetterAuthActionButton>
+            </div>
           ))}
         </div>
-      )}
-      <Dialog
-        open={isDialogOpen}
-        onOpenChange={o => {
-          if (o) form.reset()
-          setIsDialogOpen(o)
-        }}
-      >
-        <DialogTrigger asChild>
-          <Button>New Passkey</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Passkey</DialogTitle>
-            <DialogDescription>
-              Create a new passkey for secure, passwordless authentication.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...form}>
-            <form
-              className="space-y-4"
-              onSubmit={form.handleSubmit(handleAddPasskey)}
-            >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" disabled={isSubmitting} className="w-full">
-                <LoadingSwap isLoading={isSubmitting}>Add</LoadingSwap>
-              </Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+        )}
+      </div>
     </div>
   )
 }

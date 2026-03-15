@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { SessionManager } from "./components/session-manager";
 import Link from "next/link";
 
 export default function DashboardPage() {
@@ -69,7 +68,7 @@ export default function DashboardPage() {
                         Account Dashboard
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Welcome back! Manage your active sessions, reset your password, and control your device access.
+                        Welcome back! Manage your active profile, reset your password, and control your connected accounts.
                     </p>
                 </div>
 
@@ -83,7 +82,7 @@ export default function DashboardPage() {
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                             <Button variant="outline" asChild>
-                                <Link href="/update-password">Update Password</Link>
+                                <Link href="/profile">Manage Profile</Link>
                             </Button>
                             <Button variant="destructive" onClick={handleSignOut}>
                                 Sign Out
@@ -92,10 +91,7 @@ export default function DashboardPage() {
                     </div>
                 ) : null}
 
-                {/* Sessions Section */}
-                <div className="pt-8 border-t">
-                    <SessionManager />
-                </div>
+                {/* Removing Sessions Section from here entirely as planned */}
             </div>
         </div>
     );

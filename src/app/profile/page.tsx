@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { auth } from "@/lib/auth/auth"
 import {
@@ -38,10 +39,12 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto my-6 px-4">
       <div className="mb-8">
-        <Link href="/dashboard" className="inline-flex items-center mb-6">
-          <ArrowLeft className="size-4 mr-2" />
-          Back to Dashboard
-        </Link>
+        <Button variant="ghost" className="mb-6 rounded-full -ml-4 text-muted-foreground hover:text-foreground" asChild>
+          <Link href="/dashboard" className="inline-flex items-center">
+            <ArrowLeft className="size-4 mr-2" />
+            Back to Dashboard
+          </Link>
+        </Button>
         <div className="flex items-center space-x-4">
           <div className="size-16 bg-muted rounded-full flex items-center justify-center overflow-hidden">
             {session.user.image ? (
@@ -92,15 +95,11 @@ export default async function ProfilePage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile">
-          <Card>
-            <CardContent>
-              <ProfileUpdateForm user={session.user} />
-            </CardContent>
-          </Card>
+        <TabsContent value="profile" className="mt-6">
+          <ProfileUpdateForm user={session.user} />
         </TabsContent>
 
-        <TabsContent value="security">
+        <TabsContent value="security" className="mt-6">
           <LoadingSuspense>
             <SecurityTab
               email={session.user.email}
@@ -109,27 +108,20 @@ export default async function ProfilePage() {
           </LoadingSuspense>
         </TabsContent>
 
-        <TabsContent value="sessions">
+        <TabsContent value="sessions" className="mt-6">
           <LoadingSuspense>
             <SessionsTab currentSessionToken={session.session.token} />
           </LoadingSuspense>
         </TabsContent>
 
-        <TabsContent value="accounts">
+        <TabsContent value="accounts" className="mt-6">
           <LoadingSuspense>
             <LinkedAccountsTab />
           </LoadingSuspense>
         </TabsContent>
 
-        <TabsContent value="danger">
-          <Card className="border border-destructive">
-            <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <AccountDeletion />
-            </CardContent>
-          </Card>
+        <TabsContent value="danger" className="mt-6">
+          <AccountDeletion />
         </TabsContent>
       </Tabs>
     </div>
@@ -143,11 +135,9 @@ async function LinkedAccountsTab() {
   )
 
   return (
-    <Card>
-      <CardContent>
-        <AccountLinking currentAccounts={nonCredentialAccounts} />
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <AccountLinking currentAccounts={nonCredentialAccounts} />
+    </div>
   )
 }
 
@@ -159,14 +149,12 @@ async function SessionsTab({
   const sessions = await auth.api.listSessions({ headers: await headers() })
 
   return (
-    <Card>
-      <CardContent>
-        <SessionManagement
-          sessions={sessions}
-          currentSessionToken={currentSessionToken}
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <SessionManagement
+        sessions={sessions}
+        currentSessionToken={currentSessionToken}
+      />
+    </div>
   )
 }
 
@@ -187,52 +175,24 @@ async function SecurityTab({
   return (
     <div className="space-y-6">
       {hasPasswordAccount ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Change Password</CardTitle>
-            <CardDescription>
-              Update your password for improved security.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChangePasswordForm />
-          </CardContent>
-        </Card>
+        <ChangePasswordForm />
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Set Password</CardTitle>
-            <CardDescription>
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <h3 className="text-lg font-medium">Set Password</h3>
+            <p className="text-sm text-muted-foreground">
               We will send you a password setting email to set up a password.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <SetPasswordButton email={email} />
-          </CardContent>
-        </Card>
+            </p>
+          </div>
+          <SetPasswordButton email={email} />
+        </div>
       )}
+      
       {hasPasswordAccount && (
-        <Card>
-          <CardHeader className="flex items-center justify-between gap-2">
-            <CardTitle>Two-Factor Authentication</CardTitle>
-            <Badge variant={isTwoFactorEnabled ? "default" : "secondary"}>
-              {isTwoFactorEnabled ? "Enabled" : "Disabled"}
-            </Badge>
-          </CardHeader>
-          <CardContent>
-            <TwoFactorAuth isEnabled={isTwoFactorEnabled} />
-          </CardContent>
-        </Card>
+        <TwoFactorAuth isEnabled={isTwoFactorEnabled} />
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Passkeys</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PasskeyManagement passkeys={passkeys} />
-        </CardContent>
-      </Card>
+      <PasskeyManagement passkeys={passkeys} />
     </div>
   )
 }

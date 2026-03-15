@@ -29,40 +29,53 @@ export function SessionManagement({
     })
   }
 
+  function handleSignOut() {
+    return authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login")
+        }
+      }
+    })
+  }
+
   return (
     <div className="space-y-6">
-      {currentSession && (
-        <SessionCard session={currentSession} isCurrentSession />
-      )}
+      <div className="space-y-2">
+        <h3 className="text-lg font-medium">Current Session</h3>
+        {currentSession && (
+          <SessionCard session={currentSession} isCurrentSession onSignOut={handleSignOut} />
+        )}
+      </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">Other Active Sessions</h3>
-          {otherSessions.length > 0 && (
-            <BetterAuthActionButton
-              variant="destructive"
-              size="sm"
-              action={revokeOtherSessions}
-            >
-              Revoke Other Sessions
-            </BetterAuthActionButton>
-          )}
-        </div>
+      {otherSessions.length > 0 && (
+        <div className="space-y-4 pt-4 border-t">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium">Other Active Sessions</h3>
+          </div>
 
-        {otherSessions.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              No other active sessions
-            </CardContent>
-          </Card>
-        ) : (
           <div className="space-y-3">
             {otherSessions.map(session => (
               <SessionCard key={session.id} session={session} />
             ))}
           </div>
-        )}
-      </div>
+
+          <div className="bg-destructive/5 text-destructive rounded-xl p-4 border border-destructive/20 flex flex-col gap-2 items-start sm:flex-row sm:items-center justify-between mt-6">
+            <div className="space-y-1">
+              <p className="font-semibold text-sm">Security check</p>
+              <p className="text-sm opacity-90 max-w-sm">If you see a session you don't recognize or trust, log out of all unauthorized devices immediately to protect your account.</p>
+            </div>
+            <BetterAuthActionButton
+              variant="destructive"
+              size="sm"
+              action={revokeOtherSessions}
+              className="w-full sm:w-auto mt-2 sm:mt-0 shadow-sm"
+            >
+              Revoke all sessions
+            </BetterAuthActionButton>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -70,9 +83,11 @@ export function SessionManagement({
 function SessionCard({
   session,
   isCurrentSession = false,
+  onSignOut,
 }: {
   session: Session
   isCurrentSession?: boolean
+  onSignOut?: () => Promise<any>
 }) {
   const router = useRouter()
   const userAgentInfo = session.userAgent ? UAParser(session.userAgent) : null
@@ -110,40 +125,54 @@ function SessionCard({
   }
 
   return (
-    <Card>
-      <CardHeader className="flex justify-between">
-        <CardTitle>{getBrowserInformation()}</CardTitle>
-        {isCurrentSession && <Badge>Current Session</Badge>}
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {userAgentInfo?.device.type === "mobile" ? (
-              <Smartphone />
-            ) : (
-              <Monitor />
-            )}
-            <div>
-              <p className="text-sm text-muted-foreground">
-                Created: {formatDate(session.createdAt)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Expires: {formatDate(session.expiresAt)}
-              </p>
-            </div>
-          </div>
-          {!isCurrentSession && (
-            <BetterAuthActionButton
-              variant="destructive"
-              size="sm"
-              action={revokeSession}
-              successMessage="Session revoked"
-            >
-              <Trash2 />
-            </BetterAuthActionButton>
-          )}
+    <div
+      className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isCurrentSession ? "border-green-500/50 bg-green-500/5" : "border-border bg-card"}`}
+    >
+      <div className="flex items-center gap-4">
+        <div className={`p-2 rounded-full ${isCurrentSession ? 'bg-green-500/10 text-green-600' : 'bg-secondary text-muted-foreground'}`}>
+          {userAgentInfo?.device.type === "mobile" ? <Smartphone className="size-5" /> : <Monitor className="size-5" />}
         </div>
-      </CardContent>
-    </Card>
+
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="font-medium text-foreground">
+              {getBrowserInformation()}
+            </p>
+
+            {isCurrentSession && (
+              <span className="px-2 py-0.5 text-[10px] uppercase font-bold text-green-700 bg-green-100 rounded-full dark:bg-green-900/30 dark:text-green-400">
+                This Session
+              </span>
+            )}
+          </div>
+          <div className="text-sm text-muted-foreground flex flex-col gap-0.5 mt-0.5">
+            <p>Signed in: {formatDate(session.createdAt)}</p>
+            <p>Expires: {formatDate(session.expiresAt)}</p>
+          </div>
+        </div>
+      </div>
+
+      {isCurrentSession ? (
+        <BetterAuthActionButton
+          variant="outline"
+          size="sm"
+          action={onSignOut || (() => Promise.resolve())}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Sign Out
+        </BetterAuthActionButton>
+      ) : (
+        <BetterAuthActionButton
+          variant="ghost"
+          size="sm"
+          action={revokeSession}
+          successMessage="Session revoked"
+          className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+          title="Log out from this device"
+        >
+          <Trash2 className="size-4" />
+        </BetterAuthActionButton>
+      )}
+    </div>
   )
 }

@@ -100,45 +100,43 @@ function AccountCard({
   }
 
   return (
-    <Card>
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            {<providerDetails.Icon className="size-5" />}
-            <div>
-              <p className="font-medium">{providerDetails.name}</p>
-              {account == null ? (
-                <p className="text-sm text-muted-foreground">
-                  Connect your {providerDetails.name} account for easier sign-in
-                </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Linked on {new Date(account.createdAt).toLocaleDateString()}
-                </p>
-              )}
-            </div>
-          </div>
+    <div className="flex items-center justify-between p-4 rounded-xl border bg-card transition-all text-card-foreground">
+      <div className="flex items-center space-x-4">
+        <div className="p-2 rounded-full bg-secondary text-muted-foreground">
+          <providerDetails.Icon className="size-5" />
+        </div>
+        <div>
+          <p className="font-medium">{providerDetails.name}</p>
           {account == null ? (
-            <BetterAuthActionButton
-              variant="outline"
-              size="sm"
-              action={linkAccount}
-            >
-              <Plus />
-              Link
-            </BetterAuthActionButton>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Connect your {providerDetails.name} account for easier sign-in
+            </p>
           ) : (
-            <BetterAuthActionButton
-              variant="destructive"
-              size="sm"
-              action={unlinkAccount}
-            >
-              <Trash2 />
-              Unlink
-            </BetterAuthActionButton>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Linked on {new Date(account.createdAt).toLocaleDateString()}
+            </p>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+      {account == null ? (
+        <BetterAuthActionButton
+          variant="outline"
+          size="sm"
+          action={linkAccount}
+        >
+          <Plus className="size-4" />
+          <span className="hidden sm:inline-block ml-2">Link</span>
+        </BetterAuthActionButton>
+      ) : (
+        <BetterAuthActionButton
+          variant="destructive"
+          size="sm"
+          action={unlinkAccount}
+        >
+          <Trash2 className="size-4" />
+          <span className="hidden sm:inline-block ml-2">Unlink</span>
+        </BetterAuthActionButton>
+      )}
+    </div>
   )
 }
