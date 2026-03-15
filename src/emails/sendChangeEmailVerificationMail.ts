@@ -13,64 +13,78 @@ const emailHTMLTemplate = (url: string) => `
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Verify Your New Email Address</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   </head>
-  <body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:24px;">
+  <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 48px 24px;">
       <tr>
         <td align="center">
-          <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background-color:#ffffff; border-radius:6px; overflow:hidden;">
-
-            <!-- Header -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 520px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
+            
+            <!-- Header/Logo -->
             <tr>
-              <td style="padding:20px 24px; background-color:#0f172a; color:#ffffff;">
-                <h1 style="margin:0; font-size:20px;">Verify your new email address</h1>
+              <td style="padding: 40px 40px 0 40px; text-align: center;">
+                <div style="background-color: #0f172a; width: 48px; height: 48px; border-radius: 12px; display: inline-block; line-height: 48px; color: #ffffff; font-size: 24px; font-weight: bold;">
+                  B
+                </div>
+                <h2 style="margin: 16px 0 0 0; font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.025em;">Better Auth</h2>
               </td>
             </tr>
 
             <!-- Body -->
             <tr>
-              <td style="padding:24px; color:#334155; font-size:14px; line-height:1.6;">
-                <p style="margin-top:0;">
-                  You have requested to change the email address associated with your account.
+              <td style="padding: 40px; color: #334155; font-size: 16px; line-height: 1.6;">
+                <h1 style="margin: 0 0 16px 0; font-size: 24px; font-weight: 700; color: #0f172a; text-align: center;">Verify your new email</h1>
+                
+                <p style="margin: 0 0 16px 0;">
+                  You requested to change the email address for your account. Please confirm your new email address by clicking the button below.
                 </p>
 
-                <p style="text-align:center; margin:24px 0;">
-                  <a
-                    href="${url}"
-                    style="
-                      display:inline-block;
-                      padding:12px 20px;
-                      background-color:#16a34a;
-                      color:#ffffff;
-                      text-decoration:none;
-                      border-radius:4px;
-                      font-weight:bold;
-                    "
-                  >
-                    Verify Email
-                  </a>
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 32px 0;">
+                  <tr>
+                    <td align="center">
+                      <a
+                        href="${url}"
+                        style="
+                          display: inline-block;
+                          padding: 14px 32px;
+                          background-color: #0f172a;
+                          color: #ffffff;
+                          text-decoration: none;
+                          border-radius: 10px;
+                          font-weight: 600;
+                          font-size: 16px;
+                        "
+                      >
+                        Verify New Email
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin: 0 0 16px 0; font-size: 14px;">
+                  If the button doesn't work, copy and paste this link into your browser:
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 14px; word-break: break-all;">
+                  <a href="${url}" style="color: #0f172a; text-decoration: underline;">${url}</a>
                 </p>
 
-                <p>
-                  If the button doesn’t work, copy and paste this link into your browser:
-                </p>
-
-                <p style="word-break:break-all;">
-                  <a href="${url}" style="color:#16a34a;">${url}</a>
-                </p>
-
-                <p style="margin-bottom:0;">
-                  If you did not request to change your email address, you can safely ignore this email and your email address will remain unchanged.
+                <p style="margin: 0; font-size: 14px; color: #64748b; text-align: center;">
+                  If you did not request this change, you can safely ignore this email. Your email address will remain unchanged.
                 </p>
               </td>
             </tr>
 
             <!-- Footer -->
             <tr>
-              <td style="padding:16px 24px; background-color:#f8fafc; color:#64748b; font-size:12px;">
-                <p style="margin:0;">
-                  This verification link may expire for security reasons.
+              <td style="padding: 32px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-align: center;">
+                <p style="margin: 0 0 8px 0;">
+                  &copy; 2025 Better Auth. All rights reserved.
+                </p>
+                <p style="margin: 0;">
+                  This link will expire for security reasons.
                 </p>
               </td>
             </tr>

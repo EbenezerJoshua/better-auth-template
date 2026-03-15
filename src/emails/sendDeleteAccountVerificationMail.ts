@@ -13,64 +13,82 @@ const emailHTMLTemplate = (url: string) => `
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Verify Account Deletion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   </head>
-  <body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:24px;">
+  <body style="margin: 0; padding: 0; background-color: #fef2f2; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fef2f2; padding: 48px 24px;">
       <tr>
         <td align="center">
-          <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background-color:#ffffff; border-radius:6px; overflow:hidden;">
-
-            <!-- Header -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 520px; background-color: #ffffff; border: 1px solid #fee2e2; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.05), 0 2px 4px -1px rgba(220, 38, 38, 0.03);">
+            
+            <!-- Header/Logo (Danger Variaton) -->
             <tr>
-              <td style="padding:20px 24px; background-color:#0f172a; color:#ffffff;">
-                <h1 style="margin:0; font-size:20px;">Verify account deletion</h1>
+              <td style="padding: 40px 40px 0 40px; text-align: center;">
+                <div style="background-color: #dc2626; width: 48px; height: 48px; border-radius: 12px; display: inline-block; line-height: 48px; color: #ffffff; font-size: 24px; font-weight: bold;">
+                  !
+                </div>
+                <h2 style="margin: 16px 0 0 0; font-size: 20px; font-weight: 700; color: #dc2626; letter-spacing: -0.025em;">Action Required</h2>
               </td>
             </tr>
 
             <!-- Body -->
             <tr>
-              <td style="padding:24px; color:#334155; font-size:14px; line-height:1.6;">
-                <p style="margin-top:0;">
-                  We received a request to delete your account. This action is irreversible. Please confirm your request by clicking the button below.
+              <td style="padding: 40px; color: #334155; font-size: 16px; line-height: 1.6;">
+                <h1 style="margin: 0 0 16px 0; font-size: 24px; font-weight: 700; color: #0f172a; text-align: center;">Delete your account?</h1>
+                
+                <p style="margin: 0 0 16px 0;">
+                  We received a request to delete your account. <strong>This action is irreversible</strong> and will result in the loss of all your data.
                 </p>
 
-                <p style="text-align:center; margin:24px 0;">
-                  <a
-                    href="${url}"
-                    style="
-                      display:inline-block;
-                      padding:12px 20px;
-                      background-color:#dc2626;
-                      color:#ffffff;
-                      text-decoration:none;
-                      border-radius:4px;
-                      font-weight:bold;
-                    "
-                  >
-                    Delete Account
-                  </a>
+                <p style="margin: 0 0 16px 0;">
+                  If you are absolutely sure, please confirm your request by clicking the button below.
                 </p>
 
-                <p>
-                  If the button doesn’t work, copy and paste this link into your browser:
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 32px 0;">
+                  <tr>
+                    <td align="center">
+                      <a
+                        href="${url}"
+                        style="
+                          display: inline-block;
+                          padding: 14px 32px;
+                          background-color: #dc2626;
+                          color: #ffffff;
+                          text-decoration: none;
+                          border-radius: 10px;
+                          font-weight: 600;
+                          font-size: 16px;
+                        "
+                      >
+                        Delete My Account
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin: 0 0 16px 0; font-size: 14px;">
+                  If the button doesn't work, copy and paste this link into your browser:
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 14px; word-break: break-all;">
+                  <a href="${url}" style="color: #dc2626; text-decoration: underline;">${url}</a>
                 </p>
 
-                <p style="word-break:break-all;">
-                  <a href="${url}" style="color:#dc2626;">${url}</a>
-                </p>
-
-                <p style="margin-bottom:0;">
-                  If you did not request to delete your account, please ignore this email and your account will remain secure.
+                <p style="margin: 0; font-size: 14px; color: #64748b; text-align: center;">
+                  If you did not request to delete your account, please ignore this email. Your account will remain safe.
                 </p>
               </td>
             </tr>
 
             <!-- Footer -->
             <tr>
-              <td style="padding:16px 24px; background-color:#f8fafc; color:#64748b; font-size:12px;">
-                <p style="margin:0;">
-                  This verification link may expire for security reasons.
+              <td style="padding: 32px; background-color: #fef2f2; border-top: 1px solid #fee2e2; color: #991b1b; font-size: 12px; text-align: center;">
+                <p style="margin: 0 0 8px 0;">
+                  &copy; 2025 Better Auth. All rights reserved.
+                </p>
+                <p style="margin: 0;">
+                  This link will expire for security reasons.
                 </p>
               </td>
             </tr>
