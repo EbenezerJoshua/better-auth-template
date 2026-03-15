@@ -1,12 +1,14 @@
 import { sendEmail } from "./mailtrapMailer";
 
-const emailHTMLTemplate = (name: string) => `
+const emailHTMLTemplate = (name: string) => {
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Better Auth Template";
+  return `
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to Better Auth!</title>
+    <title>Welcome to ${appName}!</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   </head>
   <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
@@ -19,9 +21,9 @@ const emailHTMLTemplate = (name: string) => `
             <tr>
               <td style="padding: 40px 40px 0 40px; text-align: center;">
                 <div style="background-color: #0f172a; width: 48px; height: 48px; border-radius: 12px; display: inline-block; line-height: 48px; color: #ffffff; font-size: 24px; font-weight: bold;">
-                  B
+                  ${appName.charAt(0)}
                 </div>
-                <h2 style="margin: 16px 0 0 0; font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.025em;">Better Auth Template</h2>
+                <h2 style="margin: 16px 0 0 0; font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.025em;">${appName}</h2>
               </td>
             </tr>
 
@@ -75,10 +77,10 @@ const emailHTMLTemplate = (name: string) => `
             <tr>
               <td style="padding: 32px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px; text-align: center;">
                 <p style="margin: 0 0 8px 0;">
-                  &copy; 2025 Better Auth Template. All rights reserved.
+                  &copy; ${new Date().getFullYear()} ${appName}. All rights reserved.
                 </p>
                 <p style="margin: 0;">
-                  You are receiving this because you created an account on Better Auth Template.
+                  You are receiving this because you created an account on ${appName}.
                 </p>
               </td>
             </tr>
@@ -89,6 +91,7 @@ const emailHTMLTemplate = (name: string) => `
   </body>
 </html>
 `;
+};
 
 const emailTextTemplate = (name: string) => `
 Welcome Aboard, ${name}! 🎉

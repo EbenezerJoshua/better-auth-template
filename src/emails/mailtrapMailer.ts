@@ -23,8 +23,10 @@ export async function sendEmail({ to, subject, text, html }: SendEmailOptions) {
         throw new Error("MAILTRAP_FROM_EMAIL is not set");
     }
 
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || "Better Auth Template";
+
     await transporter.sendMail({
-        from: `"Better Auth Template App" <${process.env.MAILTRAP_FROM_EMAIL}>`,
+        from: `"${appName}" <${process.env.MAILTRAP_FROM_EMAIL}>`,
         to,
         subject,
         text,
